@@ -1,0 +1,10 @@
+# Required
+opencv-python-headless>=4.8,<5
+numpy
+
+# Optional: Ultralytics YOLO backend (python run_gui.py --backend yolo). Heavy: installs PyTorch.
+# ultralytics
+
+# Optional: only to re-run paper_simulation/
+# scikit-learn
+# matplotlib

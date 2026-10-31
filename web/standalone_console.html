@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Border Watch: Agentic Surveillance Console</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1a22;--pn:#15252f;--pn2:#1c303c;--ln:#2a4150;--ink:#e3edf2;--mu:#8da3b0;--ac:#6aa7ff;--c0:#5fb49c;--c1:#e3b341;--c2:#f08a3c;--c3:#ef4f55;--cu:#9aa7b0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="dark"]){}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#e9eff2;--pn:#fff;--pn2:#eef3f6;--ln:#cfdae0;--ink:#13232c;--mu:#566b77;--ac:#1f62d0;--c0:#2c8a70;--c1:#a67c00;--c2:#c2560c;--c3:#c62832}}
+:root[data-theme="dark"]{}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Barlow,"Segoe UI",Arial,sans-serif}
+h1,h2,.num,button,.pill{font-family:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--ln);background:var(--pn)}
+h1{font-size:22px;margin:0;font-weight:700;letter-spacing:.2px}h1 small{display:block;font:400 12px Barlow,sans-serif;color:var(--mu)}
+h2{font-size:15px;margin:0 0 8px;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{background:var(--pn2);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:6px 11px;font-size:14px;font-weight:600;cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.on{background:var(--ac);color:#06121c;border-color:var(--ac)}
+button.thr{border-left:4px solid var(--c3)}button.dec{border-left:4px solid var(--c0)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:12px;padding:12px 16px}
+@media(max-width:980px){main{grid-template-columns:1fr}}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:12px}
+#mapw{padding:0;overflow:hidden;position:relative}canvas{display:block;width:100%}
+#hud{position:absolute;left:10px;top:8px;font:600 13px "Barlow Semi Condensed",sans-serif;color:#cfe0ea;text-shadow:0 1px 2px #000}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.kp div{background:var(--pn2);border-radius:6px;padding:8px 10px}.num{font-size:26px;font-weight:700;line-height:1.05}.kp span{color:var(--mu);font-size:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{background:var(--pn2);border:1px solid var(--ln);border-radius:20px;padding:2px 10px;font-size:12px}
+.chip i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c0);margin-right:5px;transition:opacity .4s}
+label{display:flex;gap:6px;align-items:center;color:var(--mu);font-size:13px}
+#q{max-height:330px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.al{border:1px solid var(--ln);border-left:5px solid var(--cu);border-radius:6px;padding:7px 9px;background:var(--pn2);cursor:pointer}
+.al.sel{border-color:var(--ac)}.al.L0{border-left-color:var(--c0)}.al.L1{border-left-color:var(--c1)}.al.L2{border-left-color:var(--c2)}.al.L3{border-left-color:var(--c3)}
+.al.esc{animation:fl 1s infinite}@keyframes fl{50%{background:#5a1d22}}@media(prefers-reduced-motion:reduce){.al.esc{animation:none;outline:2px solid var(--c3)}}
+.al b{font-family:"Barlow Semi Condensed",sans-serif;font-size:16px}.al small{color:var(--mu)}
+.pill{font-size:12px;font-weight:700;padding:1px 8px;border-radius:10px;color:#07131b;margin-left:6px}
+.al .bt{margin-top:6px;display:flex;gap:6px}.al .bt button{padding:3px 9px;font-size:13px}
+.p0{background:var(--c0)}.p1{background:var(--c1)}.p2{background:var(--c2)}.p3{background:var(--c3)}.pu{background:var(--cu)}
+.bar{height:6px;background:var(--pn2);border-radius:3px;margin:2px 0 6px}.bar i{display:block;height:100%;background:var(--ac);border-radius:3px}
+#det p,#log p{margin:0 0 5px}#det .ag{color:var(--mu)}#det .ag b{color:var(--ink)}
+#log{max-height:150px;overflow:auto;font-size:12.5px;color:var(--mu)}#log b{color:var(--ink)}
+.empty{color:var(--mu);padding:10px 2px}
+</style></head><body>
+<header>
+<h1>Border Watch<small>Multi-agent surveillance console, simulated sector</small></h1>
+<div class="row"><span id="clk" class="num" style="font-size:20px">00:00</span>
+<button id="b1" class="on">1x</button><button id="b2">2x</button><button id="b4">4x</button><button id="bp">Pause</button><button id="br">Reset</button></div>
+</header>
+<main>
+<section style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<div class="card" id="mapw"><canvas id="cv"></canvas><div id="hud"></div></div>
+<div class="card"><h2>Scenario controls</h2>
+<div class="row" style="margin-bottom:8px"><span style="color:var(--mu)">Inject threat:</span>
+<button class="thr" data-i="0">Person crossing</button><button class="thr" data-i="1">Group</button><button class="thr" data-i="2">Loitering</button><button class="thr" data-i="3">Vehicle</button><button class="thr" data-i="4">Drone</button><button class="thr" data-i="5">Abandoned object</button><button class="thr" data-i="6">Fence cut</button>
+<span style="color:var(--mu);margin-left:6px">Decoy:</span><button class="dec" data-i="7">Animal</button><button class="dec" data-i="8">Wind</button><button class="dec" data-i="9">Patrol</button></div>
+<div class="row"><label><input type="checkbox" id="tn"> Night</label><label><input type="checkbox" id="tb"> Fog or rain</label>
+<label><input type="checkbox" id="ta" checked> Auto-generate events</label>
+<label><input type="checkbox" id="tg" checked> Agents filter and rank alerts</label>
+<label>Alert threshold <input type="range" id="tau" min="30" max="95" value="60"> <span id="tv">0.60</span></label></div></div>
+<div class="kp" id="kp"></div>
+<div class="two"><div class="card"><h2>Raw alarms vs. operator alerts</h2><canvas id="ch" height="130"></canvas></div>
+<div class="card"><h2>Agents</h2><div class="chips" id="ags"></div><p style="color:var(--mu);font-size:12.5px;margin:10px 0 0">Perception agents read the sensors, the fusion agent weighs them with weather and patrol context, the behaviour and risk agents score the event, and the orchestrator applies policy before the operator sees it.</p></div></div>
+</section>
+<aside style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<div class="card"><h2>Operator queue <span id="qc" style="color:var(--mu);font-weight:400"></span></h2><div id="q"></div></div>
+<div class="card" id="det"><h2>Alert detail</h2><div class="empty">Select an alert or a track on the map to see how the agents reached their decision.</div></div>
+<div class="card"><h2>Audit log</h2><div id="log"></div></div>
+</aside></main>
+<script>
+const $=s=>document.querySelector(s),R=Math.random,cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const NM=['Person crossing','Group movement','Loitering','Vehicle intrusion','Drone','Abandoned object','Fence breach','Animal','Wind-blown vegetation','Authorised patrol'];
+const M=[[.75,.8,.6,.2,0],[.8,.85,.7,.25,0],[.7,.75,.5,.3,0],[.8,.7,.85,.1,0],[.35,.4,.55,0,.85],[.55,.6,.1,0,0],[.5,.55,.3,.9,0],[.45,.6,.5,.25,0],[.5,.05,.4,.3,0],[.8,.8,.7,.15,0]];
+const SEV=[.5,.8,.3,.8,.6,.9,.7],SP=[[14,6],[12,5],[2,2],[50,15],[40,12],[0,.8],[0,.8],[22,12],[0,1],[45,12]],PR=[1.6,.7,1,.8,.5,.5,.9,25,20,8];
+const LV=['Low','Medium','High','Critical'],ACT=[
+'Log and review in digest.','Send patrol to observe; keep tracking.','Dispatch patrol to the fence line; cue thermal camera.','Dispatch quick-reaction team to the gate; block access road.','Launch counter-drone check and alert air-defence desk.','Cordon area and request ordnance specialist; do not approach.','Send team to inspect the fence section; check camera cover.'];
+const TW=[[150,380],[450,380],[750,380]],RD=[450,520],FY=250,W=900,H=560;
+let S,cv=$('#cv'),cx=cv.getContext('2d'),ch=$('#ch'),cc=ch.getContext('2d'),sel=null,sig='',sc=1,last=0,spd=1;
+const AG=['Vision','Vehicle','Drone','Perimeter','Fusion','Behaviour','Risk','Alert'];
+function init(){S={t:0,run:true,e:[],a:[],id:1,nt:3,nb:1,log:[],ser:[],ns:0,n:{th:0,hit:0,miss:0,raw:0,op:0,sup:0,fp:0,dig:0},rt:[],ag:AG.map(_=>0)};sel=null;sig='';say('Console started. Agents online.')}
+function say(m){S.log.unshift(`<p><b>${fmt(S.t)}</b> ${m}</p>`);S.log.length=Math.min(S.log.length,40)}
+const fmt=t=>String((t/60)|0).padStart(2,'0')+':'+String((t%60)|0).padStart(2,'0');
+function spawn(c){const e={id:S.id++,c,h:[],age:0,ot:0,obs:0,sc:[0,0,0,0,0],cov:[0,0,0,0,0],gs:1,x:60+R()*780,y:-8,vx:0,vy:0,life:400,auth:c==9?R()<.85:R()<.02,raw:0,al:null,done:0};
+if(c<7)S.n.th++;
+if(c==0||c==1){e.vy=14+R()*3;e.vx=(R()-.5)*6;if(c==1)e.gs=3+(R()*5|0)}
+else if(c==2){e.x=80+R()*740;e.vy=22;e.hold=45}
+else if(c==3){e.vy=48+R()*10;e.vx=(R()-.5)*14}
+else if(c==4){e.x=R()<.5?20:880;e.vx=e.x<400?24:-24;e.vy=26}
+else if(c==5){e.y=290+R()*40;e.life=100}
+else if(c==6){e.y=FY;e.life=70}
+else if(c==7){e.y=130+R()*250;e.a=R()*6.28;e.life=45;e.gs=1+(R()*3|0)>2?1:1}
+else if(c==8){e.y=170+R()*160;e.life=9}
+else if(c==9){e.x=-5;e.y=345;e.vx=44+R()*8}
+if(c==5||c==6||c==8)e.x=100+R()*700;S.e.push(e);return e}
+function mean(c,k){let m=M[c][k];if(k==0){if($('#tn').checked)m*=.45;if($('#tb').checked)m*=.75}if(k==1&&$('#tb').checked)m*=.9;return m}
+function cover(e){const d=TW.reduce((a,t)=>Math.min(a,Math.hypot(e.x-t[0],e.y-t[1])),999),dr=Math.hypot(e.x-RD[0],e.y-RD[1]);return[d<250,d<250,dr<400,Math.abs(e.y-FY)<28,dr<430]}
+function observe(e){const cv_=cover(e);if(!cv_.some(x=>x))return;e.obs++;S.ag[4]++;
+cv_.forEach((v,k)=>{e.cov[k]=v;if(!v)return;const m=mean(e.c,k),sg=k==0&&$('#tn').checked?.22:.15,s=cl(m+(R()+R()+R()-1.5)*sg*2,0,1);e.sc[k]=e.obs>1?e.sc[k]*.7+s*.3:s;if(k<2)S.ag[0]++;if(k==2)S.ag[1]+=e.c==3;if(k==4&&s>.4)S.ag[2]++;if(k==3&&s>.5)S.ag[3]++});
+const mx=Math.max(...e.sc.map((s,k)=>e.cov[k]?s:0));if(!e.raw&&mx>.6){e.raw=1;S.n.raw++;if(!$('#tg').checked)mkAlert(e,'U')}
+if(e.obs>=4)assess(e)}
+function post(e){const sp=Math.hypot(e.vx,e.vy)+(R()-.5)*3,L=NM.map((_,c)=>{let l=Math.log(PR[c]);for(let k=0;k<5;k++)if(e.cov[k])l-=(e.sc[k]-mean(c,k))**2/.08;l-=(sp-SP[c][0])**2/(2*SP[c][1]**2);if((e.gs>=3)!=(c==1))l-=3;l-=e.auth?(c==9?0:4):(c==9?3:0);return l}),mx=Math.max(...L),ex=L.map(l=>Math.exp(l-mx)),z=ex.reduce((a,b)=>a+b);return ex.map(v=>v/z)}
+function assess(e){const P=post(e);S.ag[5]+=e.gs>=3||Math.hypot(e.vx,e.vy)<3;const th=P.slice(0,7).reduce((a,b)=>a+b),sg=P.slice(0,7).reduce((a,p,c)=>a+p*SEV[c],0)/Math.max(th,1e-6),d=Math.abs(e.y-FY),r=sg*(1+.3*(e.gs>=4)+.4*(d<100)+.2*$('#tn').checked),lv=r<.45?0:r<.7?1:r<1?2:3;S.ag[6]++;
+e.P=P;e.th=th;e.r=r;e.lv=lv;
+if(!$('#tg').checked)return;
+if(!e.al&&th>=S.tau&&!e.done)mkAlert(e,lv);
+else if(e.al&&e.al.st=='new'&&e.al.lv!='U'){e.al.lv=lv;if(th<S.tau-.25){e.al.st='gone';S.n.op--;say(`#${e.id} withdrawn after re-evaluation (threat ${Math.round(th*100)}%).`);e.done=1}}}
+function mkAlert(e,lv){if(lv=='U'&&e.al)return;const a={id:e.id,e,lv,t0:S.t,st:'new'};e.al=a;S.a.push(a);S.ag[7]++;
+if(lv=='U'||lv>0)S.n.op++;say(`<b>#${e.id}</b> alert raised: ${lv=='U'?'raw sensor alarm (unranked)':LV[lv]+' risk, '+NM[topc(e)]}.`)}
+const topc=e=>(e.P||[]).reduce((b,p,i,a)=>p>a[b]?i:b,e.c);
+function step(dt){S.t+=dt;S.ns+=dt;
+S.nt-=dt*($('#ta').checked);if(S.nt<=0){spawn((R()*7)|0);S.nt=10+R()*10}
+S.nb-=dt*($('#ta').checked);if(S.nb<=0){const q=R();spawn(q<.5?7:q<.85?8:9);S.nb=2.5+R()*3}
+S.e.forEach(e=>{e.age+=dt;e.x+=e.vx*dt;e.y+=e.vy*dt;
+if(e.c==2){if(e.vy>0&&e.y>=212){e.vy=0;e.vx=0}if(e.vy==0&&e.age>e.hold+9){e.vy=-12}}
+if(e.c==7){e.a+=(R()-.5)*dt*3;e.vx=Math.cos(e.a)*22;e.vy=Math.sin(e.a)*22;e.y=cl(e.y,110,430)}
+if(e.c==1||e.c==0){if(e.y>FY+10)e.vx=0}
+if(Math.floor(e.age*2)>e.ot){e.ot=Math.floor(e.age*2);observe(e)}
+if(e.age%.5<dt&&(e.al||sel==e.id))e.h.push([e.x,e.y]);if(e.h.length>40)e.h.shift();
+if(e.x<-30||e.x>W+30||e.y<-30||e.y>H+30||e.age>e.life)e.gone=1});
+S.e.filter(e=>e.gone).forEach(end);S.e=S.e.filter(e=>!e.gone);
+S.a.forEach(a=>{if(a.lv==3&&a.st=='new'&&S.t-a.t0>25&&!a.esc){a.esc=1;say(`<b>#${a.id}</b> Critical alert unacknowledged for 25 s: escalated to commander.`)}});
+if(S.ns>=5){S.ns=0;S.ser.push([S.n.raw,S.n.op]);if(S.ser.length>60)S.ser.shift()}}
+function end(e){const a=e.al;if(a&&(a.st=='new'||a.st=='ack')){if(a.lv===0){a.st='digest';S.n.dig++;if(e.c<7)S.n.hit++}else{a.st='lost';if(e.c<7){S.n.miss++;say(`<b>#${e.id}</b> ${NM[e.c]} left the sector without a response.`)}}}
+else if(!a&&e.c<7&&!e.done){S.n.miss++;say(`<b>#${e.id}</b> ${NM[e.c]} was never alerted (missed).`)}
+else if(!a&&e.raw&&e.c>=7)S.n.sup++}
+function act(id,what){const a=S.a.find(x=>x.id==id);if(!a)return;const e=a.e;
+if(what=='ack'){a.st='ack';a.ta=S.t;say(`Operator acknowledged <b>#${id}</b>.`)}
+if(what=='go'){a.st='done';e.done=1;if(e.c<7){S.n.hit++;S.rt.push(S.t-a.t0);say(`Response dispatched to <b>#${id}</b> after ${Math.round(S.t-a.t0)} s. Confirmed: ${NM[e.c]}.`)}else{S.n.fp++;say(`Response dispatched to <b>#${id}</b> but it was a false alarm (${NM[e.c]}). Label saved for retraining.`)}}
+if(what=='no'){a.st='done';e.done=1;if(e.c>=7)say(`<b>#${id}</b> dismissed correctly (${NM[e.c]}). Label saved for retraining.`);else{S.n.miss++;say(`<b>#${id}</b> dismissed, but it was a real ${NM[e.c]}. Flagged for review.`)}}
+sig=''}
+function lvName(a){return a.lv=='U'?'Unranked':LV[a.lv]}
+function ui(){const open=S.a.filter(a=>a.st=='new'||a.st=='ack').filter(a=>a.lv=='U'||a.lv>0).sort((x,y)=>S.agentsOn===false?x.t0-y.t0:(y.lv=='U'?0:y.lv)-(x.lv=='U'?0:x.lv)||x.t0-y.t0);
+const s=open.map(a=>a.id+a.st+a.lv+(a.esc?1:0)).join()+sel+S.n.dig;if(s!=sig){sig=s;$('#qc').textContent=`(${open.length} open, ${S.n.dig} low-risk in digest)`;
+$('#q').innerHTML=open.length?open.map(a=>{const e=a.e,u=a.lv=='U';return`<div class="al ${u?'':'L'+a.lv} ${a.esc?'esc':''} ${sel==a.id?'sel':''}" data-id="${a.id}"><b>#${a.id} ${u?'Sensor alarm':NM[topc(e)]}</b><span class="pill ${u?'pu':'p'+a.lv}">${lvName(a)}</span> <small>${u?'':Math.round((e.th||0)*100)+'% threat, '}${fmt(a.t0)}${a.esc?', escalated':''}</small><div class="bt">${a.st=='new'?'<button data-a="ack">Acknowledge</button>':''}<button data-a="go">Dispatch response</button><button data-a="no">Dismiss</button></div></div>`}).join(''):'<div class="empty">No open alerts. Agents are watching all sensors.</div>';det()}
+const n=S.n,rt=S.rt.length?Math.round(S.rt.reduce((a,b)=>a+b)/S.rt.length)+' s':'n/a';
+$('#kp').innerHTML=[[n.th,'Threats seen'],[n.hit,'Handled'],[n.miss,'Missed'],[n.raw,'Raw sensor alarms'],[n.op,'Sent to operator'],[n.sup,'False alarms filtered'],[n.fp,'False dispatches'],[rt,'Avg response']].map(x=>`<div><div class="num">${x[0]}</div><span>${x[1]}</span></div>`).join('');
+$('#ags').innerHTML=AG.map((g,i)=>`<span class="chip"><i></i>${g} ${S.ag[i]}</span>`).join('')+'<span class="chip"><i></i>Orchestrator</span>';
+$('#log').innerHTML=S.log.join('');$('#clk').textContent=fmt(S.t)}
+function det(){const a=S.a.find(x=>x.id==sel);if(!a){$('#det').innerHTML='<h2>Alert detail</h2><div class="empty">Select an alert or a track on the map to see how the agents reached their decision.</div>';return}
+const e=a.e,P=e.P||[],o=P.map((p,i)=>[p,i]).sort((x,y)=>y[0]-x[0]).slice(0,3),sc=e.sc.map(v=>v.toFixed(2));
+$('#det').innerHTML=`<h2>Alert #${a.id}: ${a.lv=='U'?'Sensor alarm':NM[topc(e)]}</h2>`+o.map(x=>`<div>${NM[x[1]]} ${Math.round(x[0]*100)}%</div><div class="bar"><i style="width:${x[0]*100}%"></i></div>`).join('')+
+`<p class="ag"><b>Vision</b> camera ${sc[0]}, thermal ${sc[1]}<br><b>Vehicle and drone</b> radar ${sc[2]}, RF ${sc[4]}<br><b>Perimeter</b> fence sensor ${sc[3]}<br><b>Behaviour</b> speed ${Math.hypot(e.vx,e.vy).toFixed(0)} m/s, group of ${e.gs}, ${Math.round(Math.abs(e.y-FY))} m from fence<br><b>Context</b> ${$('#tn').checked?'night, ':''}${$('#tb').checked?'poor weather, ':''}${e.auth?'matches patrol schedule':'not on patrol schedule'}<br><b>Fusion</b> threat probability ${Math.round((e.th||0)*100)}%<br><b>Risk</b> score ${(e.r||0).toFixed(2)}, level ${lvName(a)}<br><b>Policy</b> ${a.lv>=2?'operator must acknowledge before dispatch':a.lv===1?'queued for operator review':a.lv===0?'sent to digest':'agents off, no ranking'}</p>`+
+(a.lv>0||a.lv==='U'?`<p><b>Suggested action:</b> ${ACT[Math.min(topc(e),6)]||'Verify visually.'}</p>`:'')+(e.done||a.st=='lost'?`<p><b>Ground truth:</b> ${NM[e.c]}</p>`:'')}
+function draw(tm){const w=cv.clientWidth;if(cv.width!=w*devicePixelRatio){cv.width=w*devicePixelRatio;cv.height=w*H/W*devicePixelRatio;cv.style.height=w*H/W+'px'}sc=w/W;cx.setTransform(sc*devicePixelRatio,0,0,sc*devicePixelRatio,0,0);
+const g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1d3140');g.addColorStop(.45,'#16262f');g.addColorStop(1,'#0f1c24');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+cx.strokeStyle='rgba(120,160,180,.07)';cx.lineWidth=1;for(let i=0;i<W;i+=50){cx.beginPath();cx.moveTo(i,0);cx.lineTo(i,H);cx.stroke()}for(let i=0;i<H;i+=50){cx.beginPath();cx.moveTo(0,i);cx.lineTo(W,i);cx.stroke()}
+cx.fillStyle='rgba(239,79,85,.08)';cx.fillRect(0,FY,W,70);
+TW.forEach((t,i)=>{cx.fillStyle='rgba(106,167,255,.07)';cx.beginPath();cx.moveTo(t[0],t[1]);cx.arc(t[0],t[1],250,-Math.PI*.82,-Math.PI*.18);cx.fill();
+const a=-Math.PI/2+Math.sin(tm/1500+i*2)*1.0;cx.strokeStyle='rgba(106,167,255,.5)';cx.beginPath();cx.moveTo(t[0],t[1]);cx.lineTo(t[0]+Math.cos(a)*250,t[1]+Math.sin(a)*250);cx.stroke();
+cx.fillStyle='#6aa7ff';cx.fillRect(t[0]-6,t[1]-6,12,12);cx.fillStyle='#8da3b0';cx.font='11px Barlow,sans-serif';cx.fillText('Tower '+(i+1),t[0]-20,t[1]+22)});
+for(let r=0;r<3;r++){cx.strokeStyle=`rgba(95,180,156,${.18-r*.05})`;cx.beginPath();cx.arc(RD[0],RD[1],130+r*110+(tm/60%40),Math.PI,0);cx.stroke()}
+cx.fillStyle='#5fb49c';cx.beginPath();cx.moveTo(RD[0],RD[1]-8);cx.lineTo(RD[0]-8,RD[1]+6);cx.lineTo(RD[0]+8,RD[1]+6);cx.fill();cx.fillText('Radar',RD[0]-16,RD[1]+22);
+cx.setLineDash([10,6]);cx.strokeStyle='#e3edf2';cx.lineWidth=2.5;cx.beginPath();cx.moveTo(0,FY);cx.lineTo(W,FY);cx.stroke();cx.setLineDash([]);
+cx.fillStyle='#e3edf2';cx.fillRect(430,FY-5,40,10);cx.fillStyle='#8da3b0';cx.fillText('Gate',440,FY-12);cx.fillText('Foreign side',8,16);cx.fillText('Restricted zone',8,FY+16);
+const colr=a=>!a?'#9ab':a.lv=='U'?'#9aa7b0':['#5fb49c','#e3b341','#f08a3c','#ef4f55'][a.lv];
+S.e.forEach(e=>{const a=e.al&&(e.al.st=='new'||e.al.st=='ack')?e.al:null,c=colr(a),s=sel==e.id;
+if(e.h.length>1){cx.strokeStyle=c;cx.globalAlpha=.5;cx.beginPath();e.h.forEach((p,i)=>i?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.stroke();cx.globalAlpha=1}
+cx.fillStyle=a?c:'rgba(180,200,210,.55)';const n=e.c==1?e.gs:1;
+for(let i=0;i<n;i++){const x=e.x+(i%3-1)*7,y=e.y+((i/3)|0)*7;cx.beginPath();
+if(e.c==3||e.c==9)cx.rect(x-7,y-4,14,8);else if(e.c==4){cx.moveTo(x,y-7);cx.lineTo(x+7,y);cx.lineTo(x,y+7);cx.lineTo(x-7,y)}else if(e.c==5)cx.rect(x-5,y-5,10,10);else if(e.c==6){cx.moveTo(x,y-8);cx.lineTo(x+8,y+6);cx.lineTo(x-8,y+6)}else cx.arc(x,y,e.c>6?3.5:4.5,0,6.3);cx.fill()}
+if(a||s){cx.strokeStyle=s?'#fff':c;cx.lineWidth=s?2:1.5;cx.beginPath();cx.arc(e.x,e.y,17+(a&&a.lv===3?Math.sin(tm/150)*3:0),0,6.3);cx.stroke();cx.lineWidth=1;cx.fillStyle=c;cx.font='600 12px Barlow Semi Condensed,sans-serif';cx.fillText('#'+e.id+' '+(a.lv=='U'?'alarm':LV[a.lv]),e.x+21,e.y-4)}});
+if($('#tn').checked){cx.fillStyle='rgba(0,0,20,.38)';cx.fillRect(0,0,W,H)}
+if($('#tb').checked){cx.strokeStyle='rgba(200,220,240,.18)';for(let i=0;i<70;i++){const x=R()*W,y=R()*H;cx.beginPath();cx.moveTo(x,y);cx.lineTo(x-4,y+12);cx.stroke()}}
+$('#hud').textContent=`${$('#tn').checked?'Night. ':'Day. '}${$('#tb').checked?'Poor weather. ':''}${$('#tg').checked?'Agents ranking alerts':'Raw alarm mode'}`;
+const cw=ch.clientWidth;ch.width=cw*devicePixelRatio;ch.height=130*devicePixelRatio;cc.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);cc.clearRect(0,0,cw,130);
+const d=S.ser,mx=Math.max(5,...d.map(x=>x[0]));[[0,'#9aa7b0','Raw alarms'],[1,'#6aa7ff','Sent to operator']].forEach(([k,c,l],j)=>{cc.strokeStyle=c;cc.lineWidth=2;cc.beginPath();d.forEach((v,i)=>{const x=10+i*(cw-20)/59,y=115-v[k]/mx*100;i?cc.lineTo(x,y):cc.moveTo(x,y)});cc.stroke();cc.fillStyle=c;cc.font='12px Barlow,sans-serif';cc.fillText(l,12+j*110,14)})}
+function loop(ts){const dt=Math.min((ts-last)/1000,.2);last=ts;S.tau=$('#tau').value/100;$('#tv').textContent=S.tau.toFixed(2);S.agentsOn=$('#tg').checked;
+if(S.run){S.acc=(S.acc||0)+dt*spd;while(S.acc>=.1){step(.1);S.acc-=.1}}draw(ts);ui();requestAnimationFrame(loop)}
+document.addEventListener('click',ev=>{const b=ev.target.closest('button'),al=ev.target.closest('.al');
+if(b&&b.dataset.i!=null){spawn(+b.dataset.i);say(`Operator injected: ${NM[+b.dataset.i]}.`)}
+else if(b&&b.dataset.a&&al)act(al.dataset.id,b.dataset.a);else if(al){sel=+al.dataset.id;sig=''}
+if(b&&b.id){if(b.id=='bp'){S.run=!S.run;b.textContent=S.run?'Pause':'Resume'}if(b.id=='br')init();if(/^b[124]$/.test(b.id)){spd=+b.id[1];['b1','b2','b4'].forEach(i=>$('#'+i).classList.toggle('on',i==b.id))}}});
+cv.addEventListener('click',ev=>{const r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)/sc,y=(ev.clientY-r.top)/sc;let best=null,bd=28;S.e.forEach(e=>{const d=Math.hypot(e.x-x,e.y-y);if(e.al&&d<bd){bd=d;best=e}});if(best){sel=best.id;sig=''}});
+init();requestAnimationFrame(t=>{last=t;loop(t)});
+</script></body></html>

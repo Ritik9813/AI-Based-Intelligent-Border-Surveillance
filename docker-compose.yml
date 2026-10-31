@@ -1,0 +1,6 @@
+services:
+  borderwatch:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]     # local only; put an HTTPS reverse proxy in front before exposing it
+    volumes: ["./data:/app/data"]
+    restart: unless-stopped

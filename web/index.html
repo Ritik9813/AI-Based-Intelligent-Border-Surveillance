@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI-Based Intelligent Border Surveillance</title><link rel="stylesheet" href="/style.css"></head><body>
+<div class="app">
+<nav aria-label="Main">
+ <button data-p="dashboard" class="on"><i>▦</i>Dashboard</button><button data-p="cameras"><i>▣</i>Live Cameras</button>
+ <button data-p="events"><i>🔔</i>Events</button><button data-p="analytics"><i>▥</i>Risk Analytics</button>
+ <button data-p="map"><i>⌖</i>Map View</button><button data-p="agent"><i>◉</i>AI Agent</button>
+ <button data-p="reports"><i>▤</i>Reports</button><button data-p="settings"><i>⚙</i>Settings</button>
+ <div class="sp"></div><button class="out" id="logout"><i>⏻</i>Logout</button>
+</nav>
+<div class="main">
+<div id="banner" hidden></div><header>
+ <div class="logo"><svg width="42" height="46" viewBox="0 0 42 46" aria-hidden="true"><path d="M21 2 4 9v13c0 11 7 19 17 22 10-3 17-11 17-22V9z" fill="#0f2a55" stroke="#2b7fff" stroke-width="2.5"/><circle cx="21" cy="22" r="7" fill="none" stroke="#5aa2ff" stroke-width="2.5"/><circle cx="21" cy="22" r="2.5" fill="#5aa2ff"/></svg>
+ <div><h1>AI-Based Intelligent Border Surveillance</h1><small>Real-Time Threat Detection and Multi-Camera Monitoring</small></div></div>
+ <div class="cards" id="top"></div>
+ <div class="clock"><b id="clk"></b>Real-Time Monitoring</div>
+ <div class="user"><div class="av">👤</div><div><b id="uname">Admin</b><small id="urole">Security Operator</small></div></div>
+</header>
+
+<section class="page on" id="p-dashboard"><div class="dash">
+ <div id="d-c1" style="grid-column:1/4;grid-row:1"></div><div id="d-c2" style="grid-column:4/7;grid-row:1"></div><div id="d-c3" style="grid-column:7/10;grid-row:1"></div>
+ <div id="d-c4" style="grid-column:1/6;grid-row:2"></div><div id="d-c5" style="grid-column:6/10;grid-row:2"></div>
+ <div class="pn" style="grid-column:10/13;grid-row:1"><h3>Threat Detection Statistics</h3><div class="rowx" style="flex-wrap:nowrap"><canvas id="donut" width="150" height="150"></canvas><div class="legend" id="dleg" style="flex:1"></div></div></div>
+ <div class="pn" style="grid-column:10/13;grid-row:2"><h3>Risk Level Distribution</h3><canvas id="bars" width="300" height="190" style="width:100%"></canvas></div>
+ <div class="pn" style="grid-column:1/9;grid-row:3"><h3>▣ Border Map View</h3><div class="mapw"><canvas id="map1" width="900" height="300" style="width:100%"></canvas><div class="zoom"><button data-z="1">+</button><button data-z="-1">−</button><button data-z="0" title="Reset">◎</button></div><div class="mlegend" id="mleg"></div></div></div>
+ <div class="pn" style="grid-column:9/13;grid-row:3"><div class="rowx"><h3 style="margin:0">🤖 AI Security Agent (Assistant)</h3><span class="online">● Online</span></div><div class="chat" id="chat1" style="margin-top:8px"></div></div>
+ <div class="pn" style="grid-column:1/13;grid-row:4"><div class="rowx"><h3 style="margin:0">Recent Events</h3><span style="flex:1"></span><button class="btn sm" data-p="events">View All</button></div><div class="tw" id="evt1" style="margin-top:6px"></div></div>
+</div></section>
+
+<section class="page" id="p-cameras"><div class="pn" style="margin-bottom:10px"><b>Upload a video to any camera.</b> Click <i>Upload video</i> on a tile or drag a file onto it. Analysis starts at once and detections appear in Events. You can also type a webcam index (0) or an RTSP/HTTP stream address.</div><div class="grid2" id="camgrid"></div></section>
+<section class="page" id="p-events"><div class="pn"><div class="rowx" style="margin-bottom:8px"><h3 style="margin:0">All Events</h3><select id="f-lv"><option value="">All risk levels</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select><select id="f-st"><option value="">All statuses</option><option>New</option><option>Acknowledged</option><option>Dispatched</option><option>Dismissed</option><option>Logged</option></select><input id="f-q" placeholder="Search type, camera…" style="background:#08162b;border:1px solid var(--ln);border-radius:7px;padding:6px 10px"></div><div class="tw" id="evt2" style="max-height:70vh"></div></div></section>
+<section class="page" id="p-analytics"><div class="kv" id="kv" style="margin-bottom:10px"></div><div class="grid2"><div class="pn"><h3>Risk Level Distribution</h3><canvas id="bars2" width="480" height="240" style="width:100%"></canvas></div><div class="pn"><h3>Events by Type</h3><canvas id="tbars" width="480" height="240" style="width:100%"></canvas></div><div class="pn" style="grid-column:1/-1"><h3>Events in the Last 30 Minutes</h3><canvas id="tl" width="980" height="200" style="width:100%"></canvas></div><div class="pn" style="grid-column:1/-1"><h3>Camera health</h3><div class="tw" id="camtab"></div></div><div class="pn" style="grid-column:1/-1"><h3>Activity heatmaps (where people and vehicles were seen)</h3><div class="grid2" id="heats"></div></div></div></section>
+<section class="page" id="p-map"><div class="pn"><div class="mapw"><canvas id="map2" width="1100" height="560" style="width:100%"></canvas><div class="zoom"><button data-z="1">+</button><button data-z="-1">−</button><button data-z="0">◎</button></div></div><p style="color:var(--mu);margin:8px 0 0">Stylised terrain map. Click a marker for the event. Camera and event positions are schematic, not GPS.</p></div></section>
+<section class="page" id="p-agent"><div class="grid2"><div class="pn"><div class="rowx"><h3 style="margin:0">AI Security Agent</h3><span class="online">● Online</span></div><div class="chat" id="chat2" style="margin-top:8px"></div></div>
+<div class="pn"><h3>Agents (items processed)</h3><div class="chips" id="ags"></div><h3 style="margin-top:14px">How the agents are controlled</h3><ol class="pol" style="padding-left:18px;margin:0">
+<li><b>Orchestrator</b> is the only route between agents and checks every output.</li><li><b>Tool allow-list:</b> each agent may use only its own tools.</li><li><b>Human approval:</b> High and Critical alerts must be acknowledged before a response can be dispatched.</li><li><b>Corroboration</b> and minimum confidence hold back weak detections.</li><li><b>Escalation:</b> a Critical alert left unacknowledged for 25 s goes to the commander.</li><li><b>Audit log</b> records every decision; operator actions become training labels.</li><li><b>Fail-safe:</b> if an agent fails, raw sensor alarms are used.</li></ol></div>
+<div class="pn" style="grid-column:1/-1"><h3>Audit Log</h3><div class="log" id="log"></div></div></div></section>
+<section class="page" id="p-reports"><div class="pn"><h3>Reports</h3><div class="kv" id="rkv" style="margin-bottom:12px"></div><div class="rowx"><a class="btn pri" href="/api/report.csv" style="text-decoration:none">Download CSV</a><a class="btn" href="/api/report.html" target="_blank" style="text-decoration:none">Open printable report</a></div><p style="color:var(--mu)">The printable report can be saved as PDF from the browser's Print dialog.</p></div></section>
+<section class="page" id="p-settings"><div class="grid2"><div class="pn"><h3>General</h3>
+<label class="tg"><input type="checkbox" id="s-demo"> Demo data (simulated sensors generate events)</label><label class="tg"><input type="checkbox" id="s-loop"> Loop uploaded videos</label>
+<label class="tg"><input type="checkbox" id="s-ag"> Demo: agents filter and rank alerts</label><label class="tg"><input type="checkbox" id="s-night"> Demo: night</label><label class="tg"><input type="checkbox" id="s-bad"> Demo: fog or rain</label>
+<label class="tg">Demo alert threshold <input type="range" id="s-tau" min="30" max="95"> <span id="s-tv"></span></label>
+<div class="rowx" style="margin-top:8px"><button class="btn red" id="clr">Clear all events</button><button class="btn" id="rst">Reset console</button></div></div>
+<div class="pn"><h3>Analysis</h3><label class="tg"><input type="checkbox" id="s-trails"> Show movement trails on video</label><label class="tg"><input type="checkbox" id="s-heat"> Overlay activity heatmap on video</label>
+<label class="tg"><input type="checkbox" id="s-enh"> Enhance low-light video before detection</label><label class="tg"><input type="checkbox" id="s-snd"> Sound alarm on High and Critical events (this browser)</label></div>
+<div class="pn"><h3>Webhook notifications</h3><input id="s-wh" placeholder="https://example.com/hook" style="width:100%;background:#08162b;border:1px solid var(--ln);border-radius:7px;padding:6px 10px"><div class="rowx" style="margin-top:8px"><select id="s-whm"><option value="1">Medium and above</option><option value="2">High and above</option><option value="3">Critical only</option></select><button class="btn sm pri" id="s-whs">Save</button><button class="btn sm" id="s-wht">Send test</button></div><p style="color:var(--mu);margin:8px 0 0">Posts a JSON message for each qualifying event.</p></div>
+<div class="pn"><h3>Account</h3><div class="rowx"><input id="pw-o" type="password" placeholder="Current password" class="in"><input id="pw-n" type="password" placeholder="New password" class="in"><button class="btn sm pri" id="pw-s">Change password</button></div></div>
+<div class="pn" id="usersbox"><h3>Users (admin)</h3><div id="ulist"></div><div class="rowx" style="margin-top:8px"><input id="nu-u" placeholder="Username" class="in"><input id="nu-p" type="password" placeholder="Password" class="in"><select id="nu-r"><option>viewer</option><option>operator</option><option>admin</option></select><button class="btn sm pri" id="nu-a">Add user</button></div></div>
+<div class="pn"><h3>Inject demo event</h3><div class="rowx" id="inj"></div><p style="color:var(--mu)">Creates a simulated event so you can show the alert flow without a video.</p></div>
+<div class="pn"><h3>Detector</h3><div id="det"></div></div></div></section>
+</div></div>
+<div id="modal"><div class="box" id="mbox"></div></div><div id="toast"></div>
+<div id="out" class="on"><form id="lf" class="lbox"><h2 style="margin:0">Sign in</h2><p style="color:var(--mu);margin:0" id="lhint">AI-Based Intelligent Border Surveillance</p>
+<label>Username<input id="lu" autocomplete="username" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label>
+<div id="lerr" style="color:#ff8a8d;min-height:18px"></div><button class="btn pri" type="submit">Sign in</button></form></div>
+<script src="/app.js"></script></body></html>
